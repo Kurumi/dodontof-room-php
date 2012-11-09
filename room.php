@@ -5,6 +5,34 @@
 */
 define('OUT_LOGIN_TIME',30);
 
+function getdirlist($dirpath='' , $flag = true ){
+	if ( strcmp($dirpath,'')==0 ) die('dir name is undefind.'); 
+	$dir_list = array();
+	if( ($dir = @opendir($dirpath) ) == FALSE ) {
+		die( "dir {$dirpath} not found.");
+	}
+	while ( ($file=readdir( $dir )) !== FALSE ){
+		if ( is_dir( "$dirpath/$file" ) ){ 
+			if( strpos( $file ,'.' ) !== 0 ){      
+				$dir_list[] = $file;  
+			}
+		}
+	}
+	return $dir_list;
+}
+
+function ddf_loadRuby($file) {
+	if (file_exists("./src_bcdice/diceBot/".$file.'.rb')) {
+		$data = file("./src_bcdice/diceBot/".$file.'.rb');
+		foreach($data as $index => $line) {
+			if (trim($line) === 'def gameName') {
+				return trim(trim($data[$index + 1]),'"'."'");
+			}
+		}
+	}
+	return $file;
+}
+
 function ddf_loadRooms($savedata_dir,$sorttype='',$game_none='設定なし') {
 	$dirs = getdirlist($savedata_dir);
 	date_default_timezone_set('Asia/Tokyo');
